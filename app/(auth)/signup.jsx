@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { View, StyleSheet, Text, SafeAreaView, AppState, ScrollView } from 'react-native';
+// react native paper
+import { TextInput, Button, HelperText } from 'react-native-paper';
+
+import { useStorageState } from '../../lib/useStorageStage';
+import { useProfileStore } from '@/hooks/store';
 
 import { supabase } from '@/lib/supabase'
 
 // expo router
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
-// react native pape
-import { TextInput, Button } from 'react-native-paper';
-
-const authBgImg = require('@/assets/images/auth-bg.png')
+import { Picker } from '@react-native-picker/picker';
 
 AppState.addEventListener('change', (state) => {
   if (state === 'active') {
@@ -20,11 +22,16 @@ AppState.addEventListener('change', (state) => {
 })
 
 const RegisterScreen = () => {
+  const [[_, session], setSession] = useStorageState('session');
+  const [signupLoading, setSignupLoading] = useState(false);
+  const profileState = useProfileStore();
+
   const [profile, setProfile] = useState({
     fname: '',
     mname: '',
     lname: '',
-    address: ''
+    address: '',
+    gender: 'male'
   });
 
   const [email, setEmail] = useState('');
@@ -41,27 +48,45 @@ const RegisterScreen = () => {
   };
 
   const signup = async () => {
+    if (password !== confirmPassword) {
+      console.log("NOT MATCH")
+      return
+    };
+
+    setSignupLoading(true);
     try {
-      let { data } = await supabase.auth.signUp({
+      let { data: responseSignupData } = await supabase.auth.signUp({
         email,
         password,
       })
 
+      setSession(JSON.stringify({ access_token: responseSignupData?.session?.access_token }))
 
-      let { data: insertedProfile, error } = await supabase
+      let { data: responseData, error } = await supabase
         .from('profiles')
         .insert([{
           ...profile,
-          authId: data.session?.user.id
+          authId: responseSignupData.session?.user.id
         }])
         .select()
+
+      if(error) return;
+
+      profileState.setProfile(responseData[0])
+
+      setSignupLoading(false);
+      router.replace('/');
     } catch (error) {
       console.error("Creating Account Error", error)
     }
   }
 
+  const notMatch = () => {
+    return password !== confirmPassword;
+  };
+
   return (
-    <ScrollView style={{ backgroundColor: 'white', paddingTop: 40 }}>
+    <ScrollView style={{ backgroundColor: 'white' }}>
       <SafeAreaView style={styles.container}>
         <View style={{ width: '100%', padding: 30 }}>
           <View>
@@ -70,7 +95,7 @@ const RegisterScreen = () => {
             </Text>
             <Text>Profile {profile.address}</Text>
             <TextInput
-              style={{ width: '100%', marginVertical: 4 }}
+              style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
               mode="outlined"
               label="First name"
               placeholder="Type something"
@@ -78,7 +103,7 @@ const RegisterScreen = () => {
               onChangeText={(text) => onChangeTextHandler('fname', text)}
             />
             <TextInput
-              style={{ width: '100%', marginVertical: 4 }}
+              style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
               mode="outlined"
               label="Middle name"
               placeholder="Type something"
@@ -86,7 +111,7 @@ const RegisterScreen = () => {
               onChangeText={(text) => onChangeTextHandler('mname', text)}
             />
             <TextInput
-              style={{ width: '100%', marginVertical: 4 }}
+              style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
               mode="outlined"
               label="Last name"
               placeholder="Type something"
@@ -94,16 +119,31 @@ const RegisterScreen = () => {
               onChangeText={(text) => onChangeTextHandler('lname', text)}
             />
             <TextInput
-              style={{ width: '100%', marginVertical: 4 }}
+              style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
               mode="outlined"
               label="Address"
               placeholder="Type something"
               left={(<TextInput.Icon icon="email" />)}
               onChangeText={(text) => onChangeTextHandler('address', text)}
             />
+            <Text style={{ marginTop: 9 }}>Gender:</Text>
+            <Picker
+              selectedValue={profile.gender}
+              onValueChange={(itemValue, itemIndex) => {
+                const updatedValue = { gender: itemValue }
+                setProfile(prevState => ({
+                  ...prevState,
+                  ...updatedValue
+                }))
+              }}
+              style={{ backgroundColor: '#eee', height: 50 }}
+            >
+              <Picker.Item label="Male" value="male" />
+              <Picker.Item label="Female" value="female" />
+            </Picker>
             <Text style={{ marginTop: 20 }}>Account:</Text>
             <TextInput
-              style={{ width: '100%', marginVertical: 4 }}
+              style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
               mode="outlined"
               label="Email"
               placeholder="Type something"
@@ -111,7 +151,7 @@ const RegisterScreen = () => {
               onChangeText={setEmail}
             />
             <TextInput
-              style={{ width: '100%', marginVertical: 4 }}
+              style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
               mode="outlined"
               label="Password"
               placeholder="Type something"
@@ -121,7 +161,7 @@ const RegisterScreen = () => {
               onChangeText={setPassword}
             />
             <TextInput
-              style={{ width: '100%', marginVertical: 4 }}
+              style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
               mode="outlined"
               label="Password"
               placeholder="Type something"
@@ -129,8 +169,13 @@ const RegisterScreen = () => {
               right={(<TextInput.Icon icon="eye" onPress={() => setShowConfirmPassword(!showConfirmPassword)} />)}
               secureTextEntry={!showConfirmPassword}
               onChangeText={setConfirmPassword}
+              activeOutlineColor={notMatch() ? 'red' : 'black'}
+              outlineColor={notMatch() ? 'red' : 'black'}
             />
-            <Button mode="contained" style={styles.button} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase onPress={signup}>
+            <HelperText type="error" visible={notMatch()}>
+              Password does not match!
+            </HelperText>
+            <Button mode="contained" loading={signupLoading} style={styles.button} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase onPress={signup}>
               Create Account
             </Button>
             <View style={{ marginTop: 10 }}>
@@ -139,7 +184,7 @@ const RegisterScreen = () => {
           </View>
         </View>
       </SafeAreaView>
-    </ScrollView>
+    </ScrollView >
   );
 }
 
@@ -157,7 +202,8 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 30,
     height: 50,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: '#e47f1a'
   }
 });
 

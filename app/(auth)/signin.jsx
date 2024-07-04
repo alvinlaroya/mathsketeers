@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Alert, View, Image, StyleSheet, Text, SafeAreaView } from 'react-native';
 
 import { useSession } from '../../lib/ctx';
+import { useStorageState } from '../../lib/useStorageStage';
 
 // expo router
 import { Link, router } from 'expo-router';
@@ -12,6 +13,7 @@ import { TextInput, Button } from 'react-native-paper';
 const authBgImg = require('@/assets/images/auth-bg.png');
 
 const LoginScreen = () => {
+  const [[isLoading, session], setSession] = useStorageState('session');
   const { signIn } = useSession();
 
   const [email, setEmail] = useState('');
@@ -21,7 +23,7 @@ const LoginScreen = () => {
     //setLoading(true)
     signIn(email, password);
 
-    router.replace('/')
+    if (!isLoading) router.replace('/')
     //setLoading(false)
   }
 
@@ -52,7 +54,7 @@ const LoginScreen = () => {
             right={(<TextInput.Icon icon="eye" />)}
             onChangeText={setPassword}
           />
-          <Button mode="contained" style={styles.button} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase onPress={signInWithEmail}>
+          <Button mode="contained" loading={isLoading} style={styles.button} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase onPress={signInWithEmail}>
             Log in
           </Button>
           <View style={{ marginTop: 10 }}>
@@ -83,7 +85,8 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 30,
     height: 50,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: '#e47f1a'
   }
 });
 
