@@ -1,9 +1,23 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Appbar } from 'react-native-paper';
+import { Appbar, Avatar } from 'react-native-paper';
 
 import { useProfileStore } from '@/hooks/store';
+
+const male = require(`@/assets/images/male-avatar.png`);
+const female = require(`@/assets/images/female-avatar.png`);
+const maleAdmin = require(`@/assets/images/male-admin-avatar.png`);
+const femaleAdmin = require(`@/assets/images/female-admin-avatar.png`);
+
+const userAvatar: any = {
+  male,
+  female,
+}
+const adminAvatar: any = {
+  male: maleAdmin,
+  female: femaleAdmin
+}
 
 
 export default function TabLayout() {
@@ -56,8 +70,11 @@ export default function TabLayout() {
         tabBarIcon: ({ focused, color, size }) => {
           const { iconName } = routeCofig(route.name, focused)
 
-          // You can return any component that you like here!
-          return <Ionicons name={iconName} size={size} color={color} />;
+          if (route.name === 'profile') {
+            return (<Avatar.Image size={size} source={profile.isAdmin ? adminAvatar[profile.gender] : userAvatar[profile.gender]} />)
+          } else {
+            return <Ionicons name={iconName} size={size} color={color} />;
+          }
         },
         tabBarActiveTintColor: '#e47f1a',
         tabBarInactiveTintColor: 'gray',

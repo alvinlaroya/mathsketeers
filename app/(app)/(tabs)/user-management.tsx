@@ -16,6 +16,7 @@ export default function Settings() {
       const { data, error } = await getProfilesQuery;
       if (error) throw error;
       const profiles: Profiles = data;
+      console.log("PROFILE", profiles)
       profileStore.setProfiles(profiles)
     }
 

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, ScrollView, View, Image, Dimensions } from 'react-native'
 import React from 'react'
 import { Button } from 'react-native-paper';
+import Animated, { FadeInRight } from 'react-native-reanimated';
 
 import { useSession } from '@/lib/ctx'
 
@@ -17,9 +18,14 @@ export default function Home() {
             </View>
             <ScrollView horizontal={true} style={styles.contentContainerStyle} showsHorizontalScrollIndicator={false}>
                 {[1, 2, 3, 4, 5].map((item, idx) => (
-                    <View key={idx} style={styles.card}>
-                        <Text>Day {item}</Text>
-                    </View>
+                    <Animated.View entering={FadeInRight.duration(200).delay(300)} key={idx} style={styles.card}>
+                        <View style={{ padding: 10 }}>
+                            <Text style={{ fontWeight: 'bold' }}>Day {item}</Text>
+                        </View>
+                        <View style={{ justifyContent: 'center' }}>
+                            <Image source={authBgImg} style={{ objectFit: 'cover', width: '100%', height: 120, backgroundColor: 'red' }} />
+                        </View>
+                    </Animated.View>
                 ))}
             </ScrollView>
         </ScrollView>
@@ -36,7 +42,6 @@ const styles = StyleSheet.create({
         width: 150,
         height: 170,
         marginHorizontal: 8,
-        padding: 10,
         borderRadius: 15
     },
     contentContainerStyle: {
