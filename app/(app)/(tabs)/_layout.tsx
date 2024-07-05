@@ -71,7 +71,7 @@ export default function TabLayout() {
           const { iconName } = routeCofig(route.name, focused)
 
           if (route.name === 'profile') {
-            return (<Avatar.Image size={size} source={profile.isAdmin ? adminAvatar[profile.gender] : userAvatar[profile.gender]} />)
+            return (<Avatar.Image size={size} source={profile?.isAdmin ? adminAvatar[profile?.gender] : userAvatar[profile?.gender]} />)
           } else {
             return <Ionicons name={iconName} size={size} color={color} />;
           }
