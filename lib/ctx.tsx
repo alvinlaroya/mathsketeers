@@ -46,15 +46,15 @@ export function SessionProvider(props: React.PropsWithChildren) {
     }
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        supabase.auth.getSession().then(async ({ data: { session } }) => {
             console.log("GET SESSION", session?.user.id)
-            fetchProfile(session?.user.id);
+            await fetchProfile(session?.user.id);
             setSession(JSON.stringify({ access_token: session?.access_token }));
         })
 
-        supabase.auth.onAuthStateChange((_event, session) => {
+        supabase.auth.onAuthStateChange(async (_event, session) => {
             console.log("AUTH STATE CHANGE", session?.user.id)
-            fetchProfile(session?.user.id);
+            await fetchProfile(session?.user.id);
             setSession(JSON.stringify({ access_token: session?.access_token }));
         })
     }, [])

@@ -90,7 +90,6 @@ export default function TabLayout() {
         name="user-management"
         options={{
           title: 'User Management',
-          tabBarBadge: profiles.length,
           href: profile?.isAdmin ? '/user-management' : null,
         }}
       />
