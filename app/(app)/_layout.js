@@ -13,6 +13,8 @@ export default function AppLayout() {
 
   const parsedSession = JSON.parse(session)
 
+  console.log("PARSED SESSION", parsedSession)
+
   // Only require authentication within the (app) group's layout as users
   // need to be able to access the (auth) group and sign in again.
   if (!parsedSession?.access_token) {

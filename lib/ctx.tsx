@@ -49,14 +49,21 @@ export function SessionProvider(props: React.PropsWithChildren) {
         supabase.auth.getSession().then(async ({ data: { session } }) => {
             console.log("GET SESSION", session?.user.id)
             await fetchProfile(session?.user.id);
-            setSession(JSON.stringify({ access_token: session?.access_token }));
+            setSession(JSON.stringify({ access_token: session?.access_token, uid: session?.user.id }));
         })
 
         supabase.auth.onAuthStateChange(async (_event, session) => {
             console.log("AUTH STATE CHANGE", session?.user.id)
             await fetchProfile(session?.user.id);
-            setSession(JSON.stringify({ access_token: session?.access_token }));
+            setSession(JSON.stringify({ access_token: session?.access_token, uid: session?.user.id }));
         })
+
+        const getProfile = async () => {
+            if (!session) return;
+            const parsedSesssion = JSON.parse(session)
+            await fetchProfile(parsedSesssion?.uid)
+        }
+        getProfile();
     }, [])
 
     return (
@@ -81,10 +88,12 @@ export function SessionProvider(props: React.PropsWithChildren) {
                     }
                 },
                 signOut: async () => {
-                    ToastAndroid.show('Logging Out', ToastAndroid.SHORT);
                     try {
+                        ToastAndroid.show('Logging Out', ToastAndroid.SHORT);
+                        router.replace('/sign-in')
                         await supabase.auth.signOut()
                         setSession(null);
+                        console.log("YAWA NA YAN")
                     } catch (error) {
                         console.error("Logging Out Error", error)
                     }

@@ -9,6 +9,12 @@ export const getProfileQuery = (uid: string | any) => supabase
     .select('*')
     .eq('authId', uid)
 
+export const updateProfileQuery = (profile: any) => supabase
+    .from('profiles')
+    .update({ fname: profile.fname, mname: profile.mname, lname: profile.lname, address: profile.address, gender: profile.gender })
+    .eq('id', profile.id)
+    .select()
+
 export const getDetailsQuery = (id: string | any) => supabase
     .from("profiles")
     .select('*')

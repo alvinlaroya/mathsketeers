@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, Dimensions, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, ScrollView, ToastAndroid } from 'react-native'
 
 import { Picker } from '@react-native-picker/picker';
 import { Avatar, TextInput, Button, ActivityIndicator } from 'react-native-paper';
 
+import { updateProfileQuery } from '@/queries/profiles';
 import { useProfileStore } from '@/hooks/store'
+import { Profiles } from '@/interfaces/IProfiles';
 
 import { useSession } from '@/lib/ctx';
 
@@ -24,10 +26,29 @@ const adminAvatar: any = {
     female: femaleAdmin
 }
 
-export default function Profile() {
+export default function ProfileScreen() {
+    const profileStore: any = useProfileStore();
     const profile = useProfileStore(((state: any) => state.profile))
     const { signOut } = useSession();
-    const [isLoading, setLoading] = useState(false)
+    const [isLoading, setLoading] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+
+
+    const onChangeTextHandler = (key: string, value: any) => {
+        var newState = profile;
+        newState[key] = value;
+        profileStore.setProfile(newState);
+    };
+
+    const saveUpdateProfileHandler = async () => {
+        setIsUpdating(true);
+        const { data, error } = await updateProfileQuery(profile);
+        if (error) throw error;
+        const response: Profiles = data;
+        profileStore.setProfile(response[0])
+        setIsUpdating(false);
+        ToastAndroid.show("Profile Updated", ToastAndroid.SHORT);
+    }
 
     return (
         <>
@@ -50,6 +71,7 @@ export default function Profile() {
                                 label="First Name"
                                 placeholder="Type something"
                                 value={profile?.fname}
+                                onChangeText={(text) => onChangeTextHandler('fname', text)}
                             />
                             <TextInput
                                 style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
@@ -57,6 +79,7 @@ export default function Profile() {
                                 label="Middle Name"
                                 placeholder="Type something"
                                 value={profile?.mname}
+                                onChangeText={(text) => onChangeTextHandler('mname', text)}
                             />
                             <TextInput
                                 style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
@@ -64,6 +87,7 @@ export default function Profile() {
                                 label="Last Name"
                                 placeholder="Type something"
                                 value={profile?.lname}
+                                onChangeText={(text) => onChangeTextHandler('lname', text)}
                             />
                             <TextInput
                                 style={{ width: '100%', marginVertical: 4, backgroundColor: '#eee' }}
@@ -71,6 +95,7 @@ export default function Profile() {
                                 label="Address"
                                 placeholder="Type something"
                                 value={profile?.address}
+                                onChangeText={(text) => onChangeTextHandler('address', text)}
                             />
                             <Text style={{ marginTop: 10 }}>Gender:</Text>
                             <Picker
@@ -80,7 +105,7 @@ export default function Profile() {
                                 <Picker.Item label="Male" value="male" />
                                 <Picker.Item label="Female" value="female" />
                             </Picker>
-                            <Button mode="contained" style={styles.button} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase onPress={() => console.log("pressed")}>
+                            <Button mode="contained" loading={isUpdating} style={styles.button} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase onPress={saveUpdateProfileHandler}>
                                 Update Profile
                             </Button>
                             <Button icon="logout" mode="contained" style={styles.logoutBtn} labelStyle={{ fontSize: 15, fontWeight: 'bold', color: 'black' }} uppercase onPress={signOut}>
