@@ -1,37 +1,57 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, Image, ScrollView, TextInput } from 'react-native'
 import { Button } from 'react-native-paper';
+import { router } from 'expo-router';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+
+import { supabase } from '@/lib/supabase';
+
+import { useProfileStore } from '@/hooks/store';
 
 const activity = require('@/assets/images/quarter/activity.jpg');
 const clip = require('@/assets/images/quarter/clips.png');
+const q1 = require('@/assets/images/question/spaceship-clipart-red-17.png');
+const q2 = require('@/assets/images/question/9iz6B679T.png');
+const q3 = require('@/assets/images/question/th.jpg');
+const q4 = require('@/assets/images/question/8T68RMeac.png');
+const q5 = require('@/assets/images/question/spaceship-clipart-ufo-abduction-9.png');
+
 
 export default function module1() {
+    const profile = useProfileStore(((state: any) => state.profile))
+
     const [isLoading, setIsLoading] = useState(false);
     const [questions, setQuestions] = useState([
         {
             description: 'How many clips is this spaceship? fill those clips',
-            image: 'https://webstockreview.net/images/spaceship-clipart-red-17.png',
-            keyAnswer: 3
+            image: q1,
+            keyAnswer: 5
         },
         {
             description: 'How many clips is this spaceship? fill those clips',
-            image: 'http://www.clipartbest.com/cliparts/9iz/6B6/9iz6B679T.png',
-            keyAnswer: 3
+            image: q2,
+            keyAnswer: 5
         },
         {
             description: 'How many clips is this spaceship? fill those clips',
-            image: 'http://www.clipartbest.com/cliparts/9iz/6B6/9iz6B679T.png',
-            keyAnswer: 3
+            image: q3,
+            keyAnswer: 5
         },
         {
             description: 'How many clips is this spaceship? fill those clips',
-            image: 'http://cliparts.co/cliparts/8T6/8RM/8T68RMeac.png',
-            keyAnswer: 3
+            image: q4,
+            keyAnswer: 4
+        },
+        {
+            description: 'How many clips is this spaceship? fill those clips',
+            image: q5,
+            keyAnswer: 4
         }
     ])
     const [answers, setAnswers] = useState([]);
     const [answer, setAnswer] = useState(['clip']);
+    const [score, setScore] = useState(0);
+
 
     const removeClipHandler = () => {
         let tempArr = [...answer]
@@ -40,24 +60,46 @@ export default function module1() {
         setAnswer(tempArr)
     }
     const addClipHandler = () => {
-        let tempArr = [...answer]
         if (answer.length >= 8) return;
-        tempArr.push('clip')
-        setAnswer(tempArr)
+        setAnswer(oldAnswer => [...oldAnswer, 'clip'])
     }
 
     const nextQuestionHandler = () => {
-        {
-            setIsLoading(true);
-            let tempArr = [...answers]
-            setTimeout(() => {
-                tempArr.push(answer.length)
-                setAnswers(tempArr)
-                setAnswer(['clip'])
-                setIsLoading(false);
-            }, 2000)
+        if (answers.length <= 3) {
+            setAnswers(oldArray => [...oldArray, answer.length]);
+            setAnswer(['clip'])
+
+
+            if (questions[answers.length].keyAnswer === answer.length) {
+                setScore(oldScore => oldScore + 1)
+            }
+
+        } else {
+            setAnswers(oldArray => [...oldArray, answer.length]);
+            setAnswer(['clip'])
+
+            if (questions[answers.length].keyAnswer === answer.length) {
+                setScore(oldScore => oldScore + 1)
+            }
         }
+
     }
+
+    const finish = async () => {
+        const { error } = await supabase
+          .from('scores')
+          .insert({
+            fname: profile?.fname,
+            mname: profile?.mname,
+            lname: profile?.lname,
+            module: "quarter-1-module-1",
+            module_description: "Measure the length of an object and the distance between two objects using none-standart units",
+            score: `${score}/5`
+          })
+    
+        router.back()
+      }
+
 
     return (
         <View style={{ flex: 1 }}>
@@ -69,7 +111,7 @@ export default function module1() {
                             <Text style={{ fontSize: 16 }}>{question.description}</Text>
                             <View style={{ justifyContent: 'center', alignItems: 'center', padding: 10 }}>
                                 <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Animated.Image entering={FadeInDown.duration(500).delay(400)} source={{ uri: question.image }} style={{ width: 220, height: 220, objectFit: 'contain' }} />
+                                    <Animated.Image entering={FadeInDown.duration(500).delay(400)} source={question.image} style={{ width: 220, height: 220, objectFit: 'contain' }} />
                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, width: 'auto' }}>
                                         {answer.map((_, idx) => (
                                             <Animated.Image key={idx} entering={FadeInUp.duration(200).delay(70)} source={clip} style={{ width: 40, height: 15 }} />
@@ -84,18 +126,33 @@ export default function module1() {
             })}
 
             <View style={{ width: '100%', height: 'auto', paddingBottom: 20, paddingHorizontal: 20 }}>
-                <View style={{ marginTop: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Button icon="minus" mode="contained" style={styles.btnRemove} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} disabled={isLoading} uppercase onPress={removeClipHandler}>
-                        Remove Clip
+                {answers.length > 4 && (
+                    <View style={{ justifyContent: 'center', alignItems: 'center', height: 300, width: '100%' }}>
+                        <Text style={{ fontSize: 45 }}>Your Score</Text>
+                        <Text style={{ fontSize: 65, fontWeight: 'bold' }}>{score}/5</Text>
+                    </View>
+                )}
+                {answers.length <= 4 && (
+                    <View style={{ marginTop: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Button icon="minus" mode="contained" style={styles.btnRemove} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} disabled={isLoading} uppercase onPress={removeClipHandler}>
+                            Remove Clip
+                        </Button>
+                        <Button icon="plus" mode="contained" style={styles.btnAdd} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} disabled={isLoading} uppercase onPress={addClipHandler}>
+                            Add Clip
+                        </Button>
+                    </View>
+                )}
+                {answers.length <= 4 ? (
+                    <Button icon="check" mode="contained" loading={isLoading} style={styles.btnNext} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} disabled={isLoading} uppercase
+                        onPress={nextQuestionHandler}>
+                        {answers.length <= 3 ? 'Next Question' : 'Show Result'}
                     </Button>
-                    <Button icon="plus" mode="contained" style={styles.btnAdd} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} disabled={isLoading} uppercase onPress={addClipHandler}>
-                        Add Clip
+                ) : (
+                    <Button icon="close" mode="contained" loading={isLoading} style={styles.btnNext} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} disabled={isLoading} uppercase
+                        onPress={finish}>
+                        Finish
                     </Button>
-                </View>
-                <Button icon="check" mode="contained" loading={isLoading} style={styles.btnNext} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} disabled={isLoading} uppercase
-                    onPress={nextQuestionHandler}>
-                    Next Question
-                </Button>
+                )}
             </View>
         </View>
     )

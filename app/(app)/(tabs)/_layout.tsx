@@ -96,7 +96,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: 'Activities',
           href: profile?.isAdmin ? '/settings' : null
         }}
       />
