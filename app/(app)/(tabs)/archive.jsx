@@ -83,7 +83,7 @@ export default function settings() {
                 <View style={{ flexDirection: 'column', gap: 10 }}>
                     <View style={{ backgroundColor: 'white', borderRadius: 15, padding: 10, width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Pressable onPress={() => router.push({
-                            pathname: "/(screens)/activity",
+                            pathname: "/(screens)/archive",
                             params: { module: 'quarter-1-module-1', module_description: 'Measure the length of an object and the distance between two objects using non-standard-units.' }
                         })} style={{ width: '50%', padding: 15 }}>
                             <Text style={{ fontWeight: 'bold' }}>
@@ -100,7 +100,7 @@ export default function settings() {
 
                     <View style={{ backgroundColor: 'white', borderRadius: 15, padding: 10, width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Pressable onPress={() => router.push({
-                            pathname: "/(screens)/activity",
+                            pathname: "/(screens)/archive",
                             params: { module: 'quarter-1-module-2', module_description: 'Compare lengths and distances using non-standard units.' }
                         })} style={{ width: '50%', padding: 15 }}>
                             <Text style={{ fontWeight: 'bold' }}>
@@ -117,7 +117,7 @@ export default function settings() {
 
                     <View style={{ backgroundColor: 'white', borderRadius: 15, padding: 10, width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Pressable onPress={() => router.push({
-                            pathname: "/(screens)/activity",
+                            pathname: "/(screens)/archive",
                             params: { module: 'quarter-1-module-3', module_description: 'Solve problems involving lengths and distances using non-standard units.' }
                         })} style={{ width: '50%', padding: 15 }}>
                             <Text style={{ fontWeight: 'bold' }}>
@@ -137,7 +137,7 @@ export default function settings() {
                 <View style={{ flexDirection: 'column', gap: 10 }}>
                     <View style={{ backgroundColor: 'white', borderRadius: 15, padding: 10, width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Pressable onPress={() => router.push({
-                            pathname: "/(screens)/activity",
+                            pathname: "/(screens)/archive",
                             params: { module: 'quarter-2-module-1', module_description: 'Place value in any 2 digit numbers' }
                         })} style={{ width: '50%', padding: 15 }}>
                             <Text style={{ fontWeight: 'bold' }}>
@@ -154,7 +154,7 @@ export default function settings() {
 
                     <View style={{ backgroundColor: 'white', borderRadius: 15, padding: 10, width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Pressable onPress={() => router.push({
-                            pathname: "/(screens)/activity",
+                            pathname: "/(screens)/archive",
                             params: { module: 'quarter-2-module-2', module_description: 'Order numbers up to 10 from smallest to largest' }
                         })} style={{ width: '50%', padding: 15 }}>
                             <Text style={{ fontWeight: 'bold' }}>
@@ -171,7 +171,7 @@ export default function settings() {
 
                     <View style={{ backgroundColor: 'white', borderRadius: 15, padding: 10, width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Pressable onPress={() => router.push({
-                            pathname: "/(screens)/activity",
+                            pathname: "/(screens)/archive",
                             params: { module: 'quarter-2-module-3', module_description: 'Counts by 2s, 5s, 10s up to 50' }
                         })} style={{ width: '50%', padding: 15 }}>
                             <Text style={{ fontWeight: 'bold' }}>
@@ -188,7 +188,7 @@ export default function settings() {
 
                     <View style={{ backgroundColor: 'white', borderRadius: 15, padding: 10, width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Pressable onPress={() => router.push({
-                            pathname: "/(screens)/activity",
+                            pathname: "/(screens)/archive",
                             params: { module: 'quarter-2-module-4', module_description: 'Determine the place value of a digit in a 2-digit number' }
                         })} style={{ width: '50%', padding: 15 }}>
                             <Text style={{ fontWeight: 'bold' }}>

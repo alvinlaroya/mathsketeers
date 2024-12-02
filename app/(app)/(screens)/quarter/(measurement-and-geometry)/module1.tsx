@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 import { StyleSheet, Text, View, Image, ScrollView, TextInput } from 'react-native'
 import { Button } from 'react-native-paper';
 import { router } from 'expo-router';
@@ -85,20 +85,45 @@ export default function module1() {
 
     }
 
+    const getSchoolyear = () => {
+        const d = new Date();
+        let month = d.getMonth();
+        let year = d.getFullYear();
+        let sy1 = null;
+        let sy2 = null;
+
+        console.log("YEAR", year)
+
+        console.log("MONTH", month)
+
+        if (month <= 12 && month > 6) {
+            sy1 = year;
+            sy2 = year + 1;
+        } else {
+            sy1 = year - 1
+            sy2 = year
+        }
+
+        return `${sy1}-${sy2}`
+    }
+
     const finish = async () => {
         const { error } = await supabase
-          .from('scores')
-          .insert({
-            fname: profile?.fname,
-            mname: profile?.mname,
-            lname: profile?.lname,
-            module: "quarter-1-module-1",
-            module_description: "Measure the length of an object and the distance between two objects using none-standart units",
-            score: `${score}/5`
-          })
-    
+            .from('scores')
+            .insert({
+                fname: profile?.fname,
+                mname: profile?.mname,
+                lname: profile?.lname,
+                module: "quarter-1-module-1",
+                module_description: "Measure the length of an object and the distance between two objects using none-standart units",
+                score: `${score}/5`,
+                userId: profile?.id,
+                score_value: score,
+                school_year: getSchoolyear()
+            })
+
         router.back()
-      }
+    }
 
 
     return (

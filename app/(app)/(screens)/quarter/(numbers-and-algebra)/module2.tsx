@@ -30,7 +30,34 @@ export default function module1() {
     const [q3_ans4, setQ3_Ans4] = useState(undefined);
     const [q3_ans5, setQ3_Ans5] = useState(undefined);
 
+    const [done, setDone] = useState(false);
+    const [finalScore, setFinalScore] = useState(0)
+
+    const getSchoolyear = () => {
+        const d = new Date();
+        let month = d.getMonth();
+        let year = d.getFullYear();
+        let sy1 = null;
+        let sy2 = null;
+
+        console.log("YEAR", year)
+
+        console.log("MONTH", month)
+
+        if (month <= 12 && month > 6) {
+            sy1 = year;
+            sy2 = year + 1;
+        } else {
+            sy1 = year - 1
+            sy2 = year
+        }
+
+        return `${sy1}-${sy2}`
+    }
+
+
     const finish = async () => {
+        setDone(true)
         let score = 0;
 
         if (q1_ans1 == '2' && q1_ans2 == '4' && q1_ans3 == '6' && q1_ans4 == '8' && q1_ans5 == '10') {
@@ -45,6 +72,8 @@ export default function module1() {
 
         console.log("SCORE", score)
 
+        setFinalScore(score)
+
         const { error } = await supabase
             .from('scores')
             .insert({
@@ -53,175 +82,189 @@ export default function module1() {
                 lname: profile?.lname,
                 module: "quarter-2-module-2",
                 module_description: "Count by 2s, 5s, 10s up to 100",
-                score: `${score}/3`
+                score: `${score}/3`,
+                userId: profile?.id,
+                score_value: score,
+                school_year: getSchoolyear()
             })
-
-        router.back()
     }
 
     return (
         <ScrollView>
-            <View style={{ flex: 1 }}>
-                <View style={{ width: '100%', height: 50, padding: 15, backgroundColor: '#1982c4' }}>
-                    <Text style={{ fontSize: 24, color: 'white' }}>Count by 2s up to 10</Text>
-                </View>
-                <View style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 15 }}>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 10) {
-                                alert("Input from 1-10 numbers only!")
-                            } else {
-                                setQ1_Ans1(value)
-                            }
-                        }} />
-                        <Text>{q1_ans1}</Text>
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 10) {
-                                alert("Input from 1-10 numbers only!")
-                            } else {
-                                setQ1_Ans2(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 10) {
-                                alert("Input from 1-10 numbers only!")
-                            } else {
-                                setQ1_Ans3(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 10) {
-                                alert("Input from 1-10 numbers only!")
-                            } else {
-                                setQ1_Ans4(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 10) {
-                                alert("Input from 1-10 numbers only!")
-                            } else {
-                                setQ1_Ans5(value)
-                            }
-                        }} />
+
+
+            {done ? (
+                <View style={{ width: '100%', height: 'auto', paddingBottom: 20, paddingHorizontal: 20 }}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', height: 300, width: '100%' }}>
+                        <Text style={{ fontSize: 45 }}>Your Score</Text>
+                        <Text style={{ fontSize: 65, fontWeight: 'bold' }}>{finalScore}/5</Text>
                     </View>
                 </View>
-            </View>
-            <View style={{ flex: 1 }}>
-                <View style={{ width: '100%', height: 50, padding: 15, backgroundColor: '#52a675', marginTop: 20 }}>
-                    <Text style={{ fontSize: 24, color: 'white' }}>Count by 5s up to 25</Text>
+            ) : (
+                <View>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ width: '100%', height: 50, padding: 15, backgroundColor: '#1982c4' }}>
+                            <Text style={{ fontSize: 24, color: 'white' }}>Count by 2s up to 10</Text>
+                        </View>
+                        <View style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 15 }}>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 10) {
+                                        alert("Input from 1-10 numbers only!")
+                                    } else {
+                                        setQ1_Ans1(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 10) {
+                                        alert("Input from 1-10 numbers only!")
+                                    } else {
+                                        setQ1_Ans2(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 10) {
+                                        alert("Input from 1-10 numbers only!")
+                                    } else {
+                                        setQ1_Ans3(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 10) {
+                                        alert("Input from 1-10 numbers only!")
+                                    } else {
+                                        setQ1_Ans4(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 10 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 10) {
+                                        alert("Input from 1-10 numbers only!")
+                                    } else {
+                                        setQ1_Ans5(value)
+                                    }
+                                }} />
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ width: '100%', height: 50, padding: 15, backgroundColor: '#52a675', marginTop: 20 }}>
+                            <Text style={{ fontSize: 24, color: 'white' }}>Count by 5s up to 25</Text>
+                        </View>
+                        <View style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 15 }}>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 25) {
+                                        alert("Input from 1-25 numbers only!")
+                                    } else {
+                                        setQ2_Ans1(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 25) {
+                                        alert("Input from 1-25 numbers only!")
+                                    } else {
+                                        setQ2_Ans2(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 25) {
+                                        alert("Input from 1-25 numbers only!")
+                                    } else {
+                                        setQ2_Ans3(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 25) {
+                                        alert("Input from 1-25 numbers only!")
+                                    } else {
+                                        setQ2_Ans4(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 25) {
+                                        alert("Input from 1-25 numbers only!")
+                                    } else {
+                                        setQ2_Ans5(value)
+                                    }
+                                }} />
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ width: '100%', height: 50, padding: 15, backgroundColor: '#ff595e', marginTop: 20 }}>
+                            <Text style={{ fontSize: 24, color: 'white' }}>Count by 10s up to 50</Text>
+                        </View>
+                        <View style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 15 }}>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 50) {
+                                        alert("Input from 1-50 numbers only!")
+                                    } else {
+                                        setQ3_Ans1(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 50) {
+                                        alert("Input from 1-50 numbers only!")
+                                    } else {
+                                        setQ3_Ans2(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 50) {
+                                        alert("Input from 1-50 numbers only!")
+                                    } else {
+                                        setQ3_Ans3(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 50) {
+                                        alert("Input from 1-50 numbers only!")
+                                    } else {
+                                        setQ3_Ans4(value)
+                                    }
+                                }} />
+                            </View>
+                            <View>
+                                <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
+                                    if (Number(value) > 50) {
+                                        alert("Input from 1-50 numbers only!")
+                                    } else {
+                                        setQ3_Ans5(value)
+                                    }
+                                }} />
+                            </View>
+                        </View>
+                    </View>
+                    <Button icon="close" mode="contained" style={styles.btnNext} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase
+                        onPress={finish}>
+                        Finish
+                    </Button>
                 </View>
-                <View style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 15 }}>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 25) {
-                                alert("Input from 1-25 numbers only!")
-                            } else {
-                                setQ2_Ans1(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 25) {
-                                alert("Input from 1-25 numbers only!")
-                            } else {
-                                setQ2_Ans2(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 25) {
-                                alert("Input from 1-25 numbers only!")
-                            } else {
-                                setQ2_Ans3(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 25) {
-                                alert("Input from 1-25 numbers only!")
-                            } else {
-                                setQ2_Ans4(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 25 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 25) {
-                                alert("Input from 1-25 numbers only!")
-                            } else {
-                                setQ2_Ans5(value)
-                            }
-                        }} />
-                    </View>
-                </View>
-            </View>
-            <View style={{ flex: 1 }}>
-                <View style={{ width: '100%', height: 50, padding: 15, backgroundColor: '#ff595e', marginTop: 20 }}>
-                    <Text style={{ fontSize: 24, color: 'white' }}>Count by 10s up to 50</Text>
-                </View>
-                <View style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 15 }}>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 50) {
-                                alert("Input from 1-50 numbers only!")
-                            } else {
-                                setQ3_Ans1(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 50) {
-                                alert("Input from 1-50 numbers only!")
-                            } else {
-                                setQ3_Ans2(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 50) {
-                                alert("Input from 1-50 numbers only!")
-                            } else {
-                                setQ3_Ans3(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 50) {
-                                alert("Input from 1-50 numbers only!")
-                            } else {
-                                setQ3_Ans4(value)
-                            }
-                        }} />
-                    </View>
-                    <View>
-                        <TextInput placeholder='Enter Number (1 - 50 numbers only)' keyboardType='numeric' onChangeText={(value) => {
-                            if (Number(value) > 50) {
-                                alert("Input from 1-50 numbers only!")
-                            } else {
-                                setQ3_Ans5(value)
-                            }
-                        }} />
-                    </View>
-                </View>
-            </View>
-            <Button icon="close" mode="contained" style={styles.btnNext} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase
-                onPress={finish}>
-                Finish
-            </Button>
+            )}
+
         </ScrollView>
     )
 }

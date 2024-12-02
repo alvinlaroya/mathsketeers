@@ -27,16 +27,16 @@ const RegisterScreen = () => {
   const profileState = useProfileStore();
 
   const [profile, setProfile] = useState({
-    fname: '',
-    mname: '',
-    lname: '',
-    address: '',
+    fname: 'Alvin',
+    mname: 'Prenda',
+    lname: 'Laroya',
+    address: 'Agoo',
     gender: 'male'
   });
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('alvinreggaelaroya@gmail.com');
+  const [password, setPassword] = useState('password');
+  const [confirmPassword, setConfirmPassword] = useState('password');
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -60,7 +60,14 @@ const RegisterScreen = () => {
         password,
       })
 
+      console.log("RESPONSE SIGNUP", responseSignupData)
+
       setSession(JSON.stringify({ access_token: responseSignupData?.session?.access_token }))
+
+      console.log("CREATE PROFILE DATA", {
+        ...profile,
+        authId: responseSignupData.session?.user.id
+      })
 
       let { data: responseData, error } = await supabase
         .from('profiles')
@@ -70,7 +77,9 @@ const RegisterScreen = () => {
         }])
         .select()
 
-      if(error) return;
+      console.log("CREATED PROFILE", responseData)
+
+      if (error) return;
 
       profileState.setProfile(responseData[0])
 
@@ -99,7 +108,6 @@ const RegisterScreen = () => {
               mode="outlined"
               label="First name"
               placeholder="Type something"
-              left={(<TextInput.Icon icon="email" />)}
               onChangeText={(text) => onChangeTextHandler('fname', text)}
             />
             <TextInput
@@ -107,7 +115,6 @@ const RegisterScreen = () => {
               mode="outlined"
               label="Middle name"
               placeholder="Type something"
-              left={(<TextInput.Icon icon="email" />)}
               onChangeText={(text) => onChangeTextHandler('mname', text)}
             />
             <TextInput
@@ -115,7 +122,6 @@ const RegisterScreen = () => {
               mode="outlined"
               label="Last name"
               placeholder="Type something"
-              left={(<TextInput.Icon icon="email" />)}
               onChangeText={(text) => onChangeTextHandler('lname', text)}
             />
             <TextInput
@@ -123,7 +129,6 @@ const RegisterScreen = () => {
               mode="outlined"
               label="Address"
               placeholder="Type something"
-              left={(<TextInput.Icon icon="email" />)}
               onChangeText={(text) => onChangeTextHandler('address', text)}
             />
             <Text style={{ marginTop: 9 }}>Gender:</Text>
@@ -147,7 +152,6 @@ const RegisterScreen = () => {
               mode="outlined"
               label="Email"
               placeholder="Type something"
-              left={(<TextInput.Icon icon="email" />)}
               onChangeText={setEmail}
             />
             <TextInput
@@ -155,8 +159,6 @@ const RegisterScreen = () => {
               mode="outlined"
               label="Password"
               placeholder="Type something"
-              left={(<TextInput.Icon icon="lock" />)}
-              right={(<TextInput.Icon icon="eye" onPress={() => setShowPassword(!showPassword)} />)}
               secureTextEntry={!showPassword}
               onChangeText={setPassword}
             />
@@ -165,8 +167,6 @@ const RegisterScreen = () => {
               mode="outlined"
               label="Password"
               placeholder="Type something"
-              left={(<TextInput.Icon icon="lock" />)}
-              right={(<TextInput.Icon icon="eye" onPress={() => setShowConfirmPassword(!showConfirmPassword)} />)}
               secureTextEntry={!showConfirmPassword}
               onChangeText={setConfirmPassword}
               activeOutlineColor={notMatch() ? 'red' : 'black'}

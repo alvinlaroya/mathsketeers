@@ -17,6 +17,8 @@ export default function module1() {
   const [numbers, setNumbers] = useState([1, 7, 8, 2, 9, 5, 3, 10, 4, 6])
   const [perfect, setPerfect] = useState(false)
 
+  const [done, setDone] = useState(false)
+
   const moveNumber = (direction, idx) => {
     setNumbers(array => {
       let data = [...array];
@@ -35,7 +37,30 @@ export default function module1() {
     setPerfect(is_same)
   }, numbers)
 
+  const getSchoolyear = () => {
+    const d = new Date();
+    let month = d.getMonth();
+    let year = d.getFullYear();
+    let sy1 = null;
+    let sy2 = null;
+
+    console.log("YEAR", year)
+
+    console.log("MONTH", month)
+
+    if (month <= 12 && month > 6) {
+      sy1 = year;
+      sy2 = year + 1;
+    } else {
+      sy1 = year - 1
+      sy2 = year
+    }
+
+    return `${sy1}-${sy2}`
+  }
+
   const finish = async () => {
+    setDone(true)
     const { error } = await supabase
       .from('scores')
       .insert({
@@ -44,38 +69,50 @@ export default function module1() {
         lname: profile?.lname,
         module: "quarter-2-module-1",
         module_description: "Order Numbers up to 10 from smallest to largest",
-        score: perfect ? '10/10' : '0/10'
+        score: perfect ? '10/10' : '0/10',
+        userId: profile?.id,
+        score_value: score,
+        school_year: getSchoolyear()
       })
 
-    router.back()
   }
 
   return (
     <ScrollView>
-      <View style={{ flex: 1 }}>
-        <View style={{ width: '100%', height: 50, padding: 10 }}>
-          <Text style={{ fontSize: 19 }}>Order numbers up to 10 from smallest to largest</Text>
+
+      {done ? (
+        <View style={{ width: '100%', height: 'auto', paddingBottom: 20, paddingHorizontal: 20 }}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', height: 300, width: '100%' }}>
+            <Text style={{ fontSize: 45 }}>Your Score</Text>
+            <Text style={{ fontSize: 65, fontWeight: 'bold' }}>{perfect ? '10' : '0'}/10</Text>
+          </View>
         </View>
-        <View style={{ flexDirection: 'column', gap: 10, padding: 20 }}>
-          {numbers.map((item, i) => (
-            <View key={i} style={{ alignItems: 'center', borderRadius: 15, borderWidth: 4, borderColor: perfect ? '#7CB342': 'transparent', backgroundColor: colors[i], padding: 15, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white', marginLeft: 15 }}>{item}</Text>
-              <View>
-                <Pressable onPress={() => moveNumber('up', i)} style={{ borderColor: 'white', borderWidth: 2, backgroundColor: '#1976D2', borderRadius: 50, height: 38, width: 38, justifyContent: 'center', alignItems: 'center' }}>
-                  <Ionicons name="caret-up-outline" size={25} color="white" />
-                </Pressable>
-                <Pressable onPress={() => moveNumber('down', i)} style={{ borderColor: 'white', borderWidth: 2, marginTop: 5, backgroundColor: '#1976D2', borderRadius: 50, height: 38, width: 38, justifyContent: 'center', alignItems: 'center' }}>
-                  <Ionicons name="caret-down-outline" size={25} color="white" />
-                </Pressable>
+      ) : (
+        <View style={{ flex: 1 }}>
+          <View style={{ width: '100%', height: 50, padding: 10 }}>
+            <Text style={{ fontSize: 19 }}>Order numbers up to 10 from smallest to largest</Text>
+          </View>
+          <View style={{ flexDirection: 'column', gap: 10, padding: 20 }}>
+            {numbers.map((item, i) => (
+              <View key={i} style={{ alignItems: 'center', borderRadius: 15, borderWidth: 4, borderColor: perfect ? '#7CB342' : 'transparent', backgroundColor: colors[i], padding: 15, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white', marginLeft: 15 }}>{item}</Text>
+                <View>
+                  <Pressable onPress={() => moveNumber('up', i)} style={{ borderColor: 'white', borderWidth: 2, backgroundColor: '#1976D2', borderRadius: 50, height: 38, width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                    <Ionicons name="caret-up-outline" size={25} color="white" />
+                  </Pressable>
+                  <Pressable onPress={() => moveNumber('down', i)} style={{ borderColor: 'white', borderWidth: 2, marginTop: 5, backgroundColor: '#1976D2', borderRadius: 50, height: 38, width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                    <Ionicons name="caret-down-outline" size={25} color="white" />
+                  </Pressable>
+                </View>
               </View>
-            </View>
-          ))}
+            ))}
+          </View>
+          <Button icon="close" mode="contained" style={styles.btnNext} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase
+            onPress={finish}>
+            Finish
+          </Button>
         </View>
-      </View>
-      <Button icon="close" mode="contained" style={styles.btnNext} labelStyle={{ fontSize: 15, fontWeight: 'bold' }} uppercase
-        onPress={finish}>
-        Finish
-      </Button>
+      )}
     </ScrollView>
   )
 }

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Dimensions, ScrollView, ToastAndroid } from 're
 
 import { Picker } from '@react-native-picker/picker';
 import { Avatar, TextInput, Button, ActivityIndicator } from 'react-native-paper';
+import UserAvatar from "../components/Avatar";
 
 import { updateProfileQuery } from '@/queries/profiles';
 import { useProfileStore } from '@/hooks/store'
@@ -60,7 +61,16 @@ export default function ProfileScreen() {
                 <ScrollView>
                     <View style={styles.container}>
                         <View style={styles.avatar}>
-                            <Avatar.Image size={180} source={profile?.isAdmin ? adminAvatar[profile?.gender] : userAvatar[profile?.gender]} />
+                            {profile?.avatar ? (
+                                <UserAvatar
+                                    size={200}
+                                    url={profile?.avatar}
+
+                                />
+                            ) : (
+                                <Avatar.Image size={180} source={profile?.isAdmin ? adminAvatar[profile?.gender] : userAvatar[profile?.gender]} />
+                            )}
+
                             <Text style={{ alignSelf: 'center', marginTop: 8 }}>{profile?.isAdmin ? 'Administrator' : 'Student'}</Text>
                         </View>
                         <Text style={{ fontSize: 21, fontWeight: 'bold' }}>Profile Details:</Text>

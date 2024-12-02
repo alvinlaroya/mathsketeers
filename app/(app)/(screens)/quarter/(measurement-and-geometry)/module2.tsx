@@ -35,7 +35,7 @@ export default function module1() {
   const [answers, setAnswers] = useState([]);
   const [answer, setAnswer] = useState(0);
   const [score, setScore] = useState(0);
-  
+
   const nextQuestionHandler = async () => {
     console.log("ANSWER", answer)
     if (answers.length <= 2) {
@@ -57,6 +57,28 @@ export default function module1() {
     }
   }
 
+  const getSchoolyear = () => {
+    const d = new Date();
+    let month = d.getMonth();
+    let year = d.getFullYear();
+    let sy1 = null;
+    let sy2 = null;
+
+    console.log("YEAR", year)
+
+    console.log("MONTH", month)
+
+    if (month <= 12 && month > 6) {
+      sy1 = year;
+      sy2 = year + 1;
+    } else {
+      sy1 = year - 1
+      sy2 = year
+    }
+
+    return `${sy1}-${sy2}`
+  }
+
   const finish = async () => {
     const { error } = await supabase
       .from('scores')
@@ -66,7 +88,10 @@ export default function module1() {
         lname: profile?.lname,
         module: "quarter-1-module-2",
         module_description: "Compare lengths and distance using non standard",
-        score: `${score}/3`
+        score: `${score}/3`,
+        userId: profile?.id,
+        score_value: score,
+        school_year: getSchoolyear()
       })
 
     router.back()

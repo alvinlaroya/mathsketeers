@@ -39,7 +39,13 @@ export default function TabLayout() {
     } else if (route === 'settings') {
       iconName = focused ? 'settings' : 'settings-outline';
       appbarTitle = 'Settings'
-    } else {
+    } else if (route === 'create-account') {
+      iconName = focused ? 'people-circle' : 'people-circle-outline';
+      appbarTitle = 'Create Account'
+    } else if (route === 'archive') {
+      iconName = focused ? 'settings' : 'settings-outline';
+      appbarTitle = 'Archive'
+    }else {
       iconName = focused ? 'person' : 'person-outline';
       appbarTitle = 'Profile'
     }
@@ -98,6 +104,20 @@ export default function TabLayout() {
         options={{
           title: 'Activities',
           href: profile?.isAdmin ? '/settings' : null
+        }}
+      />
+      <Tabs.Screen
+        name="create-account"
+        options={{
+          title: 'Create Account',
+          href: profile?.isAdmin ? '/create-account' : null
+        }}
+      />
+       <Tabs.Screen
+        name="archive"
+        options={{
+          title: 'Archive',
+          href: profile?.isAdmin ? '/archive' : null
         }}
       />
       <Tabs.Screen

@@ -67,6 +67,30 @@ export default function module1() {
         }
     }
 
+    const getSchoolyear = () => {
+        const d = new Date();
+        let month = d.getMonth();
+        let year = d.getFullYear();
+        let sy1 = null;
+        let sy2 = null;
+
+        console.log("YEAR", year)
+
+        console.log("MONTH", month)
+
+        if (month <= 12 && month > 6) {
+            sy1 = year;
+            sy2 = year + 1;
+        } else {
+            sy1 = year - 1
+            sy2 = year
+        }
+
+        return `${sy1}-${sy2}`
+    }
+
+
+
     const finish = async () => {
         const { error } = await supabase
             .from('scores')
@@ -74,9 +98,12 @@ export default function module1() {
                 fname: profile?.fname,
                 mname: profile?.mname,
                 lname: profile?.lname,
-                module: "quarter-2-module-3",
+                module: "quarter-2-module-4",
                 module_description: "Determine the place value of a digit in a 2 digit number",
-                score: `${score}/5`
+                score: `${score}/5`,
+                userId: profile?.id,
+                score_value: score,
+                school_year: getSchoolyear()
             })
 
         router.back()

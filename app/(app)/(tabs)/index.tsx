@@ -35,7 +35,7 @@ export default function Home() {
                             <Image source={naBg} style={{ objectFit: 'cover', width: '100%', height: 150, backgroundColor: 'red', borderRadius: 15 }} />
                         </View>
                         <View style={{ padding: 10 }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 15 }}>Measurement And Geometry (MG)</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 15 }}>Number and Algebra (NA)</Text>
                         </View>
                     </Animated.View>
                 </Pressable>

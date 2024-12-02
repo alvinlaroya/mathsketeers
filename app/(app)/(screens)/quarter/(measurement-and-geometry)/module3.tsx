@@ -58,6 +58,28 @@ export default function module1() {
         }
     }
 
+    const getSchoolyear = () => {
+        const d = new Date();
+        let month = d.getMonth();
+        let year = d.getFullYear();
+        let sy1 = null;
+        let sy2 = null;
+
+        console.log("YEAR", year)
+
+        console.log("MONTH", month)
+
+        if (month <= 12 && month > 6) {
+            sy1 = year;
+            sy2 = year + 1;
+        } else {
+            sy1 = year - 1
+            sy2 = year
+        }
+
+        return `${sy1}-${sy2}`
+    }
+
     const finish = async () => {
         const { error } = await supabase
             .from('scores')
@@ -67,7 +89,10 @@ export default function module1() {
                 lname: profile?.lname,
                 module: "quarter-1-module-3",
                 module_description: "Compare lengths and distance using non standard",
-                score: `${score}/3`
+                score: `${score}/3`,
+                userId: profile?.id,
+                score_value: score,
+                school_year: getSchoolyear()
             })
 
         router.back()
@@ -122,7 +147,7 @@ export default function module1() {
                             </View>
                         </View>
                     )}
-                     {answers.length === 2 && (
+                    {answers.length === 2 && (
                         <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                             <Animated.Image entering={FadeInDown.duration(500).delay(400)} source={questions[2].image} style={{ width: '100%', height: 400, objectFit: 'contain' }} />
                             <View style={{ flexDirection: 'row', gap: 10 }}>
